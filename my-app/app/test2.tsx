@@ -1,111 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import { View, Button, StyleSheet, Text } from 'react-native';
-import { Audio } from 'expo-av';
-import { router } from 'expo-router';
+import { useEffect } from "react";
+import { router } from "expo-router";
+import { Button, StyleSheet, Text, View, Alert } from "react-native";
+import * as Speech from 'expo-speech';
 
-export default function App() {
-  const [recording, setRecording] = useState(null);
-  const [sound, setSound] = useState(null);
-  const [recordingUri, setRecordingUri] = useState(null);
-  const [selectedOption, setSelectedOption] = useState(null); // A, B, C, D
-  const [message, setMessage] = useState('');
+export default function AccueilScreen() {
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Audio.requestPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Permission de microphone requise');
-      }
-    })();
+    const message = "Bienvenue ! Veuillez choisir un service en disant A pour transport, B pour habillement, ou C pour santé.";
+    Speech.speak(message);
   }, []);
 
-  const startRecording = async () => {
-    try {
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
+  const handleVoiceInput = (input) => {
+    const cleaned = input.trim().toLowerCase();
 
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
-
-      setRecording(recording);
-    } catch (err) {
-      console.error('Erreur en démarrant l’enregistrement:', err);
-    }
-  };
-
-  const stopRecording = async () => {
-    try {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
-      setRecordingUri(uri);
-      setRecording(null);
-    } catch (error) {
-      console.error('Erreur à l’arrêt de l’enregistrement:', error);
-    }
-  };
-
-  const playSound = async () => {
-    try {
-      if (!recordingUri) return;
-
-      const { sound } = await Audio.Sound.createAsync({ uri: recordingUri });
-      setSound(sound);
-      await sound.playAsync();
-    } catch (err) {
-      console.error('Erreur à la lecture audio:', err);
-    }
-  };
-
-  const handleOption = (option) => {
-    setSelectedOption(option);
-
-    switch (option) {
-      case 'A':
-        setMessage("Vous avez choisi l'option A : Bravo !");
-        break;
-      case 'B':
-        setMessage("Option B sélectionnée. Essayez encore.");
-        break;
-      case 'C':
-        setMessage("Option C - Pas tout à fait.");
-        break;
-      case 'D':
-        setMessage("D ? Bonne tentative, mais non.");
-        break;
-      default:
-        setMessage('');
+    if (cleaned.includes('a')) {
+      Speech.speak("Vous avez choisi l'option A, Service Transport.");
+      router.push('/transport');
+    } else if (cleaned.includes('b')) {
+      Speech.speak("Vous avez choisi l'option B, Service Habillement.");
+      Alert.alert("Navigation", "Vous avez choisi Habillement");
+    } else if (cleaned.includes('c')) {
+      Speech.speak("Vous avez choisi l'option C, Service Santé.");
+      Alert.alert("Navigation", "Vous avez choisi Santé");
+    } else {
+      Speech.speak("Je n'ai pas compris. Veuillez dire A, B ou C.");
     }
   };
 
   return (
     <View style={styles.container}>
-      <Button title="Aller vers /" onPress={() => router.push('/')} />
+      <Text style={styles.title}>🛠️ Les différents Services</Text>
+      <Text style={styles.title}>Implémenter la fonction vocale</Text>
 
-      <Text style={styles.title}>🎤 Enregistreur vocal</Text>
-      <Button
-        title={recording ? 'Arrêter l’enregistrement' : 'Démarrer l’enregistrement'}
-        onPress={recording ? stopRecording : startRecording}
-      />
-
-      <View style={styles.spacer} />
-      {recordingUri && <Button title="Écouter l’enregistrement" onPress={playSound} />}
-
-      <View style={styles.spacer} />
-      <Text style={styles.title}>❓ Choisissez une option :</Text>
-
-      <View style={styles.options}>
-        <Button title="Option A" onPress={() => handleOption('A')} />
-        <Button title="Option B" onPress={() => handleOption('B')} />
-        <Button title="Option C" onPress={() => handleOption('C')} />
-        <Button title="Option D" onPress={() => handleOption('D')} />
+      <View style={styles.buttonContainer}>
+        <Button title="🎤 Lancer la reconnaissance vocale (fictive)" onPress={() => {
+          // Simuler une réponse vocale. Remplace ça plus tard par de la vraie STT.
+          const fakeResponse = "a";
+          handleVoiceInput(fakeResponse);
+        }} />
       </View>
 
-      {message !== '' && (
-        <Text style={styles.result}>{message}</Text>
-      )}
+      <View style={styles.buttonContainer}>
+        <Button title="🚌 A) Service Transport" onPress={() => router.push('/transport')} />
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <Button title="👗 B) Service Habillement" onPress={() => alert("Service Habillement")} />
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <Button title="🏥 C) Service Santé" onPress={() => alert("Service Santé")} />
+      </View>
     </View>
   );
 }
@@ -116,23 +61,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  spacer: {
-    height: 20,
-  },
   title: {
-    fontSize: 18,
+    fontSize: 22,
     textAlign: 'center',
-    marginVertical: 10,
-  },
-  options: {
-    marginVertical: 10,
-    gap: 10,
-  },
-  result: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 20,
-    color: 'blue',
+    marginBottom: 20,
     fontWeight: 'bold',
+  },
+  buttonContainer: {
+    marginVertical: 10,
   },
 });
