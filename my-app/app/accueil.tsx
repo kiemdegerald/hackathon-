@@ -1,56 +1,141 @@
-import { useEffect } from "react";
-import { router } from "expo-router";
-import { Button, StyleSheet, Text, View, Alert } from "react-native";
-import * as Speech from 'expo-speech';
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import * as Speech from "expo-speech";
+import { voyages } from "./mock-data/voyages";
+import { agences } from "./mock-data/agences";
 
-export default function AccueilScreen() {
+export default function TransportScreen() {
+  const [depart, setDepart] = useState("");
+  const [arrivee, setArrivee] = useState("");
+  const [dateVoyage, setDateVoyage] = useState("");
+  const [filteredVoyages, setFilteredVoyages] = useState(voyages);
+  const [favorites, setFavorites] = useState<number[]>([]); // liste des id d'agences favorites
 
   useEffect(() => {
-    const message = "Bienvenue ! Veuillez choisir un service en disant A pour transport, B pour habillement, ou C pour santé.";
-    Speech.speak(message);
+    Speech.speak("Bienvenue au service transport.");
   }, []);
 
-  const handleVoiceInput = (input) => {
-    const cleaned = input.trim().toLowerCase();
+  useEffect(() => {
+    const filtered = voyages.filter((voyage) => {
+      const matchDepart = depart
+        ? voyage.depart.toLowerCase().includes(depart.toLowerCase())
+        : true;
+      const matchArrivee = arrivee
+        ? voyage.arrivee.toLowerCase().includes(arrivee.toLowerCase())
+        : true;
+      const matchDate = dateVoyage ? voyage.date === dateVoyage : true;
 
-    if (cleaned.includes('a')) {
-      Speech.speak("Vous avez choisi l'option A, Service Transport.");
-      router.push('/transport');
-    } else if (cleaned.includes('b')) {
-      Speech.speak("Vous avez choisi l'option B, Service Habillement.");
-      Alert.alert("Navigation", "Vous avez choisi Habillement");
-    } else if (cleaned.includes('c')) {
-      Speech.speak("Vous avez choisi l'option C, Service Santé.");
-      Alert.alert("Navigation", "Vous avez choisi Santé");
-    } else {
-      Speech.speak("Je n'ai pas compris. Veuillez dire A, B ou C.");
-    }
+      return matchDepart && matchArrivee && matchDate;
+    });
+
+    setFilteredVoyages(filtered);
+  }, [depart, arrivee, dateVoyage]);
+
+  const getAgenceName = (agenceId: number) => {
+    const agence = agences.find((a) => a.id === agenceId);
+    return agence ? agence.nom : "Inconnue";
+  };
+
+  const handleVoyagePress = (voyage: any) => {
+   Alert.alert(
+  "Voyage sélectionné",
+  `${voyage.depart} ➜ ${voyage.arrivee} avec ${getAgenceName(voyage.agenceId)}\nQue souhaitez-vous faire ?`,
+  [
+    {
+      text: "🛒 Réserver",
+      onPress: () => {
+        Alert.alert("Réservé !", `Voyage réservé pour le ${voyage.date} à ${voyage.heure}`, [
+          { text: "OK" } // ✅ permet de fermer
+        ]);
+      },
+    },
+    {
+      text: "🗺 Voir l’itinéraire",
+      onPress: () => {
+        Speech.speak(`Pour aller à l'agence ${getAgenceName(voyage.agenceId)}, prenez un taxi ou une moto.`);
+        Alert.alert("Itinéraire", "Itinéraire vocal déclenché.", [
+          { text: "Fermer" } // ✅ bouton pour quitter
+        ]);
+      },
+    },
+    {
+      text: "⭐ Ajouter agence aux favoris",
+      onPress: () => {
+        if (!favorites.includes(voyage.agenceId)) {
+          setFavorites([...favorites, voyage.agenceId]);
+          Alert.alert("Favoris", "Agence ajoutée aux favoris !", [
+            { text: "OK" }
+          ]);
+        } else {
+          Alert.alert("Favoris", "Cette agence est déjà dans vos favoris.", [
+            { text: "Fermer" }
+          ]);
+        }
+      },
+    },
+    {
+      text: "❌ Annuler",
+      style: "cancel",
+    },
+  ]
+);
+
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🛠️ Les différents Services</Text>
-      <Text style={styles.title}>Implémenter la fonction vocale</Text>
+      <Text style={styles.title}>🚌 Service Transport</Text>
 
-      <View style={styles.buttonContainer}>
-        <Button title="🎤 Lancer la reconnaissance vocale (fictive)" onPress={() => {
-          // Simuler une réponse vocale. Remplace ça plus tard par de la vraie STT.
-          const fakeResponse = "a";
-          handleVoiceInput(fakeResponse);
-        }} />
-      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="🔍 Ville de départ"
+        value={depart}
+        onChangeText={setDepart}
+      />
 
-      <View style={styles.buttonContainer}>
-        <Button title="🚌 A) Service Transport" onPress={() => router.push('/transport')} />
-      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="🔍 Ville d’arrivée"
+        value={arrivee}
+        onChangeText={setArrivee}
+      />
 
-      <View style={styles.buttonContainer}>
-        <Button title="👗 B) Service Habillement" onPress={() => alert("Service Habillement")} />
-      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="📅 Date (ex: 2025-06-20)"
+        value={dateVoyage}
+        onChangeText={setDateVoyage}
+      />
 
-      <View style={styles.buttonContainer}>
-        <Button title="🏥 C) Service Santé" onPress={() => alert("Service Santé")} />
-      </View>
+      <Text style={styles.resultTitle}>🗂 Résultats :</Text>
+
+      <FlatList
+        data={filteredVoyages}
+        keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={
+          <Text style={styles.empty}>Aucun voyage trouvé</Text>
+        }
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handleVoyagePress(item)}>
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>
+                {item.depart} ➜ {item.arrivee}
+              </Text>
+              <Text>Date : {item.date} à {item.heure}</Text>
+              <Text>Prix : {item.prix} FCFA</Text>
+              <Text>Agence : {getAgenceName(item.agenceId)} {favorites.includes(item.agenceId) ? "⭐" : ""}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 }
@@ -58,16 +143,43 @@ export default function AccueilScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 20,
+    paddingTop: 60,
   },
   title: {
     fontSize: 22,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
-  buttonContainer: {
+  input: {
+    borderWidth: 1,
+    borderColor: "#aaa",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+  },
+  resultTitle: {
+    fontSize: 18,
     marginVertical: 10,
+    fontWeight: "bold",
+  },
+  card: {
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    backgroundColor: "#f9f9f9",
+  },
+  cardTitle: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  empty: {
+    textAlign: "center",
+    color: "gray",
+    marginTop: 20,
   },
 });
