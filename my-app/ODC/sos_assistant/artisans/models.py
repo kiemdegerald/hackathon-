@@ -8,6 +8,7 @@ class Artisan(models.Model):
         ('macon', 'Maçon'),
         ('couturier', 'Couturier'),
         ('menuisier', 'Menuisier'),
+        ('photographe', 'Photographe'),
         # Ajoute selon les besoins
     ]
 

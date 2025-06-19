@@ -28,7 +28,7 @@ import {
   validateArtisanData,
   METIERS
 } from '../src/api';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesome as Icon } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 
 const ODC_ORANGE = '#FF7900';
@@ -590,7 +590,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   formContainer: {
-    backgroundColor: 'white',
+    backgroundColor: ODC_WHITE,
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -599,14 +599,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
+    color: ODC_ORANGE,
   },
   input: {
     height: 40,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: ODC_ORANGE,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
+    backgroundColor: ODC_WHITE,
+    color: ODC_BLACK,
+    fontSize: 16,
   },
   pickerContainer: {
     marginBottom: 10,
@@ -614,6 +618,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
+    color: ODC_BLACK,
   },
   metierChip: {
     paddingHorizontal: 12,
@@ -641,6 +646,7 @@ const styles = StyleSheet.create({
   checkboxText: {
     fontSize: 16,
     marginLeft: 5,
+    color: ODC_BLACK,
   },
   buttonRow: {
     flexDirection: 'row',
@@ -655,7 +661,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButtonText: {
-    color: 'white',
+    color: ODC_WHITE,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -668,7 +674,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
-    color: 'white',
+    color: ODC_WHITE,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -795,7 +801,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContainer: {
-    backgroundColor: 'white',
+    backgroundColor: ODC_WHITE,
     padding: 20,
     borderRadius: 10,
     width: '90%',
@@ -806,15 +812,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
+    color: ODC_ORANGE,
   },
   commentInput: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: ODC_ORANGE,
     borderRadius: 8,
     padding: 10,
     marginBottom: 15,
     minHeight: 80,
     textAlignVertical: 'top',
+    backgroundColor: ODC_WHITE,
+    color: ODC_BLACK,
+    fontSize: 15,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -832,7 +842,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   backButtonText: {
-    color: '#007AFF',
+    color: ODC_ORANGE,
     fontWeight: 'bold',
     fontSize: 15,
   },

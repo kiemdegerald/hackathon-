@@ -155,6 +155,7 @@ export const getMetierLabel = (metier: string): string => {
     'macon': 'Maçon',
     'couturier': 'Couturier',
     'menuisier': 'Menuisier',
+    'photographe': 'Photographe',
   };
   
   return metiersMap[metier] || metier;
@@ -168,6 +169,7 @@ export const getMetierIcon = (metier: string): string => {
     'macon': '🏗️',
     'couturier': '🧵',
     'menuisier': '🪚',
+    'photographe': '📸',
   };
   
   return iconsMap[metier] || '👷';

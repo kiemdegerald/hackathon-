@@ -5,7 +5,7 @@ from .models import Artisan, Commentaire
 class CommentaireSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commentaire
-        fields = ['id', 'contenu', 'date']
+        fields = ['id','artisan', 'contenu', 'date']
 
 class ArtisanSerializer(serializers.ModelSerializer):
     commentaires = CommentaireSerializer(many=True, read_only=True)
