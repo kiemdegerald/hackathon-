@@ -1,7 +1,7 @@
 // Configuration de l'API
 export const API_CONFIG = {
   // URL de base de votre API Django - Utilisez l'IP de votre ordinateur
-  BASE_URL: 'http://192.168.147.187:8000/api', // IP de votre ordinateur sur le réseau WiFi
+  BASE_URL: 'http://192.168.156.187:8000/api', // IP de votre ordinateur sur le réseau WiFi
   
   // Endpoints
   ENDPOINTS: {

@@ -186,33 +186,35 @@ export default function Index() {
         <Text style={styles.title}>🏠 SOS Artisans</Text>
         <Text style={styles.subtitle}>Trouvez des artisans qualifiés</Text>
       </View>
-
-      {/* Barre de recherche */}
-      <View style={styles.searchContainer}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.pickerLabel}>Filtrer par métier :</Text>
-          <Picker
-            selectedValue={selectedMetier}
-            onValueChange={setSelectedMetier}
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
-          >
-            <Picker.Item label="Tous les métiers" value="" />
-            {METIERS.map((metier) => (
-              <Picker.Item key={metier} label={getMetierLabel(metier)} value={metier} />
-            ))}
-          </Picker>
-          <TextInput
+      <TextInput
             style={styles.searchInput}
             placeholder="Rechercher un artisan"
-            placeholderTextColor="#888"
+            placeholderTextColor="#999"
             value={searchTerm}
             onChangeText={setSearchTerm}
             underlineColorAndroid="transparent"
             autoCorrect={false}
             autoCapitalize="none"
           />
+      {/* Barre de recherche */}
+      <View style={styles.searchContainer}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.pickerLabel}>Filtrer par métier :</Text>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={selectedMetier}
+              onValueChange={setSelectedMetier}
+              style={styles.picker}
+              itemStyle={styles.pickerItem}
+              mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
+    >
+              <Picker.Item label="tous les métiers" value="" />
+              {METIERS.map((metier) => (
+                <Picker.Item key={metier} label={getMetierLabel(metier)} value={metier} />
+              ))}
+            </Picker>
+          </View>
+          
         </View>
         <TouchableOpacity 
           style={styles.addButton} 
@@ -245,6 +247,7 @@ export default function Index() {
           <TextInput
             style={styles.input}
             placeholder="Nom de l'artisan"
+            placeholderTextColor="#999"
             value={formData.nom}
             onChangeText={(text) => setFormData({...formData, nom: text})}
           />
@@ -275,6 +278,7 @@ export default function Index() {
           <TextInput
             style={styles.input}
             placeholder="Ville"
+            placeholderTextColor="#999"
             value={formData.ville}
             onChangeText={(text) => setFormData({...formData, ville: text})}
           />
@@ -282,6 +286,7 @@ export default function Index() {
           <TextInput
             style={styles.input}
             placeholder="Quartier"
+            placeholderTextColor="#999"
             value={formData.quartier}
             onChangeText={(text) => setFormData({...formData, quartier: text})}
           />
@@ -289,6 +294,7 @@ export default function Index() {
           <TextInput
             style={styles.input}
             placeholder="Téléphone"
+            placeholderTextColor="#999"
             value={formData.contact}
             onChangeText={(text) => setFormData({...formData, contact: text})}
             keyboardType="phone-pad"
@@ -427,6 +433,7 @@ export default function Index() {
             <TextInput
               style={styles.commentInput}
               placeholder="Votre commentaire..."
+              placeholderTextColor="#999"
               value={newComment}
               onChangeText={setNewComment}
               multiline
@@ -539,31 +546,41 @@ const styles = StyleSheet.create({
   pickerLabel: {
     fontSize: 15,
     fontWeight: 'bold',
-    marginBottom: 2,
+    marginBottom: 8,
     color: ODC_BLACK,
-    marginLeft: 5,
+    textAlign: 'center',
   },
-  picker: {
-    backgroundColor: ODC_WHITE,
-    borderRadius: 8,
-    height: 44,
-    marginBottom: 0,
-    color: ODC_BLACK,
+  pickerWrapper: {
     borderWidth: 1,
     borderColor: ODC_ORANGE,
+    borderRadius: 8,
+    backgroundColor: ODC_WHITE,
+    marginBottom: 12,
+    overflow: 'hidden',
+    width: '90%',
+    alignSelf: 'center',
+    height: 50,
+  },
+  picker: {
+    height: 50,
+    color: ODC_BLACK,
+    backgroundColor: 'transparent',
+    width: '100%',
   },
   pickerItem: {
     fontSize: 16,
     color: ODC_BLACK,
+    backgroundColor: ODC_WHITE,
   },
   searchInput: {
-    flex: 1,
+    alignSelf: 'center',
+    width: '70%',
     height: 40,
     borderWidth: 1,
     borderColor: ODC_ORANGE,
     borderRadius: 20,
     paddingHorizontal: 15,
-    marginRight: 10,
+    marginRight: 0,
     marginTop: 10,
     backgroundColor: ODC_WHITE,
     color: ODC_BLACK,
@@ -846,4 +863,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
   },
-}); 
+});
